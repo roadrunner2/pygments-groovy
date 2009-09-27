@@ -17,5 +17,6 @@ setup(
     entry_points='''
         [pygments.lexers]
         groovylexer = lexer.groovylexer:GroovyLexer
+        gsplexer    = lexer.gsplexer:GspLexer
     '''
 )

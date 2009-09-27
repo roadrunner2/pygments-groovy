@@ -7,4 +7,4 @@
     :license: BSD, see LICENSE for more details.
 """
 
-__all__ = ['groovylexer']
+__all__ = ['groovylexer', 'gsplexer']
