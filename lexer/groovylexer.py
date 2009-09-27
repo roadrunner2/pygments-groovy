@@ -4,7 +4,10 @@
     http://groovy.codehaus.org
 """
 
-from pygments.lexer import RegexLexer
+import re
+from pygments.lexer import RegexLexer, bygroups, using, this
+from pygments.token import \
+     Text, Comment, Operator, Keyword, Name, String, Number
 
 class GroovyLexer(RegexLexer):
     """

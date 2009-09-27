@@ -7,12 +7,4 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from pygments.scanner import Scanner
-from pygments.lexer import RegexLexer, include, bygroups, using, \
-                           this
-from pygments.util import get_bool_opt, get_list_opt
-from pygments.token import \
-     Text, Comment, Operator, Keyword, Name, String, Number, Punctuation, \
-     Error
-
-__all__ = ['GroovyLexer']
+__all__ = ['groovylexer']
