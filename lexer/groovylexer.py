@@ -56,7 +56,9 @@ class GroovyLexer(RegexLexer):
             (r'[~\^\*!%&\[\]\(\)\{\}<>\|+=:;,./?-]', Operator),
             (r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Number.Float),
             (r'0x[0-9a-f]+', Number.Hex),
-            (r'[0-9]+L?', Number.Integer),
+            (r'[0-9]+[lL]', Number.Integer.Long),
+            (r'[0-9]+', Number.Integer),
+            (r'\\[0-3]?[0-7]{1,2}', Number.Oct),
             (r'\n', Text)
         ],
         'class': [
