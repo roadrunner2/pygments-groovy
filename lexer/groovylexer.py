@@ -35,12 +35,13 @@ class GroovyLexer(RegexLexer):
             (r'//.*?\n', Comment),
             (r'/\*.*?\*/', Comment),
             (r'@[a-zA-Z_][a-zA-Z0-9_\.]*', Name.Decorator),
-            (r'(assert|break|case|catch|continue|default|do|else|finally|for|'
-             r'if|goto|instanceof|new|return|switch|this|throw|try|while)\b',
-             Keyword),
-            (r'(abstract|const|enum|extends|final|implements|native|private|'
-             r'protected|public|static|strictfp|super|synchronized|throws|'
+            (r'(assert|break|case|catch|continue|default|else|finally|for|'
+             r'if|instanceof|new|return|switch|this|throw|try|while)\b',
+             Keyword),      # 'in' is not included because of its limited scope
+            (r'(abstract|enum|extends|final|implements|native|private|'
+             r'protected|public|static|super|synchronized|threadsafe|throws|'
              r'transient|volatile)\b', Keyword.Declaration),
+            (r'(const|do|goto|strictfp)\b', Keyword.Reserved),
             (r'(def|boolean|byte|char|double|float|int|long|short|void)\b',
              Keyword.Type),
             (r'(package)(\s+)', bygroups(Keyword.Namespace, Text)),
@@ -62,6 +63,7 @@ class GroovyLexer(RegexLexer):
             (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Class, '#pop')
         ],
         'import': [
-            (r'[a-zA-Z0-9_.]+\*?', Name.Namespace, '#pop')
+            (r'([a-zA-Z0-9_.]+\*?)(?:(\s+)(as)(\s+)([a-zA-Z0-9_.]+\*?))?',
+             bygroups(Name.Namespace, Text, Keyword.Namespace, Text, Name.Namespace), '#pop')
         ],
     }
