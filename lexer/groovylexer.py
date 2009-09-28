@@ -5,7 +5,7 @@
 """
 
 import re
-from pygments.lexer import RegexLexer, bygroups, using, this
+from pygments.lexer import RegexLexer, bygroups, combined, include, using, this
 from pygments.token import \
      Text, Comment, Operator, Keyword, Name, String, Number
 
@@ -48,8 +48,16 @@ class GroovyLexer(RegexLexer):
             (r'(true|false|null)\b', Keyword.Constant),
             (r'(class|interface)(\s+)', bygroups(Keyword.Declaration, Text), 'class'),
             (r'(import)(\s+)', bygroups(Keyword.Namespace, Text), 'import'),
-            (r'"(\\\\|\\"|[^"])*"', String),
-            (r"'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'", String.Char),
+            (r'((?<=~)|(?<=~\s)|(?<=~\s\s))/(\\/|[^/\n])*/', String.Regex),
+            (r'((?<=~)|(?<=~\s)|(?<=~\s\s))"""', String.Regex, combined('stringinterpol', 're-tdqs')),
+            (r"((?<=~)|(?<=~\s)|(?<=~\s\s))'''", String.Regex, 're-tsqs'),
+            (r'((?<=~)|(?<=~\s)|(?<=~\s\s))"', String.Regex, combined('stringinterpol', 're-dqs')),
+            (r"((?<=~)|(?<=~\s)|(?<=~\s\s))'", String.Regex, 're-sqs'),
+            (r'/(\\/|[^/\n])*/', String),
+            (r'"""', String.Double, combined('stringinterpol', 'tdqs')),
+            (r"'''", String.Single, 'tsqs'),
+            (r'"', String.Double, combined('stringinterpol', 'dqs')),
+            (r"'", String.Single, 'sqs'),
             (r'(\.)([a-zA-Z_][a-zA-Z0-9_]*)', bygroups(Operator, Name.Attribute)),
             (r'[a-zA-Z_][a-zA-Z0-9_]*:', Name.Label),
             (r'[a-zA-Z_\$][a-zA-Z0-9_]*', Name),
@@ -67,5 +75,59 @@ class GroovyLexer(RegexLexer):
         'import': [
             (r'([a-zA-Z0-9_.]+\*?)(?:(\s+)(as)(\s+)([a-zA-Z0-9_.]+\*?))?',
              bygroups(Name.Namespace, Text, Keyword.Namespace, Text, Name.Namespace), '#pop')
+        ],
+        'stringinterpol': [
+            (r'\$(\{[^}]*}|[a-zA-Z_][a-zA-Z0-9_]*)', String.Interpol),
+        ],
+        'stringescape': [
+            (r'\\([btnfr\"\'\\]|[0-3]?[0-7]{1,2}|u[0-9A-Fa-f]{4})', String.Escape)
+        ],
+        'string': [
+            include('stringescape'),
+            (r'\\\n|[^\n]', String)
+        ],
+        'ml-string': [
+            include('stringescape'),
+            (r'.', String)
+        ],
+        're-string': [
+            include('stringescape'),
+            (r'\\\n|[^\n]', String.Regex)
+        ],
+        'ml-re-string': [
+            include('stringescape'),
+            (r'.', String.Regex)
+        ],
+        'dqs': [
+            (r'"', String, '#pop'),
+            include('string')
+        ],
+        'sqs': [
+            (r"'", String, '#pop'),
+            include('string')
+        ],
+        'tdqs': [
+            (r'"""', String, '#pop'),
+            include('ml-string')
+        ],
+        'tsqs': [
+            (r"'''", String, '#pop'),
+            include('ml-string')
+        ],
+        're-dqs': [
+            (r'"', String.Regex, '#pop'),
+            include('re-string')
+        ],
+        're-sqs': [
+            (r"'", String.Regex, '#pop'),
+            include('re-string')
+        ],
+        're-tdqs': [
+            (r'"""', String.Regex, '#pop'),
+            include('ml-re-string')
+        ],
+        're-tsqs': [
+            (r"'''", String.Regex, '#pop'),
+            include('ml-re-string')
         ],
     }
