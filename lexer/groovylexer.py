@@ -32,8 +32,9 @@ class GroovyLexer(RegexLexer):
              r'(\s*)(\()',                                  # signature start
              bygroups(using(this), Name.Function, Text, Operator)),
             (r'[^\S\n]+', Text),
-            (r'//.*?\n', Comment),
-            (r'/\*.*?\*/', Comment),
+            (r'//.*?\n', Comment.Single),
+            (r'/\*\*(\s|\*(?!/))*', Comment.Multiline, ('javadoc', 'javadoc-summary')),
+            (r'/\*.*?\*/', Comment.Multiline),
             (r'@[a-zA-Z_][a-zA-Z0-9_\.]*', Name.Decorator),
             (r'(assert|break|case|catch|continue|default|else|finally|for|'
              r'if|instanceof|new|return|switch|this|throw|try|while)\b',
@@ -68,6 +69,25 @@ class GroovyLexer(RegexLexer):
             (r'[0-9]+', Number.Integer),
             (r'\\[0-3]?[0-7]{1,2}', Number.Oct),
             (r'\n', Text)
+        ],
+        'javadoc-summary': [
+            (r'([^@].*?(\.|(?=\*/)))?', Comment.Special, '#pop')
+        ],
+        'javadoc': [
+            (r'\*/', Comment.Multiline, '#pop'),
+            (r'{@(?:code|docRoot|inheritDoc|link|linkPlain|literal|value).*?}',
+             Comment.Special),
+            (r'(@(?:param|throws|exception))'
+             r'(\s+)([a-zA-Z0-9][a-zA-Z0-9_]*)(.*?)(?=@|\*/)',
+             bygroups(Comment.Special, Comment.Multiline, Name, Comment.Multiline)),
+            (r'(@(?:return|author|version|deprecated|serial|serialData|since))'
+             r'(.*?)(?=@|\*/)',
+             bygroups(Comment.Special, Comment.Multiline)),
+            (r'(@serialField)'
+             r'(\s+)([a-zA-Z0-9][a-zA-Z0-9_]*)(\s+)([a-zA-Z0-9][a-zA-Z0-9_]*)(.*?)(?=@|\*/)',
+             bygroups(Comment.Special, Comment.Multiline, Name, Comment.Multiline, Name,
+                      Comment.Multiline)),
+            (r'.', Comment.Multiline)
         ],
         'class': [
             (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Class, '#pop')
