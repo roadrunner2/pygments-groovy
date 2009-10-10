@@ -97,7 +97,7 @@ class GroovyLexer(RegexLexer):
              bygroups(Name.Namespace, Text, Keyword.Namespace, Text, Name.Namespace), '#pop')
         ],
         'stringinterpol': [
-            (r'\$(\{[^}]*}|[a-zA-Z_][a-zA-Z0-9_]*)', String.Interpol),
+            (r'\$(\{[^}]*}|[a-zA-Z_][a-zA-Z0-9_.]*)', String.Interpol),
         ],
         'stringescape': [
             (r'\\([btnfr\"\'\\]|[0-3]?[0-7]{1,2}|u[0-9A-Fa-f]{4})', String.Escape)
